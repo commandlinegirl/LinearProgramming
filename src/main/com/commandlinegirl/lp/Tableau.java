@@ -1,14 +1,11 @@
-package com.commandlinegirl.algorithms.linearprogramming;
+package com.commandlinegirl.lp;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 public class Tableau {
-
-    private static final Logger logger = Logger.getLogger(SimplexMethod.class.getName());
 
     private final List<List<Integer>> fullTableau;
     private final List<Integer> objective;

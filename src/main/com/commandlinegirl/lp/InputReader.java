@@ -1,4 +1,4 @@
-package com.commandlinegirl.algorithms.linearprogramming;
+package com.commandlinegirl.lp;
 
 import java.io.BufferedReader;
 import java.io.File;
