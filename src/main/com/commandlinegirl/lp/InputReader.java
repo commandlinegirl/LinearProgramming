@@ -8,20 +8,17 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-/**
- * Created on 05/05/16.
- */
 public class InputReader {
 
     private static final String DELIMINATOR = ",";
 
-    List<List<Integer>> readInput(String fileName) {
+    List<List<Double>> readInput(String fileName) {
         File file = new File(fileName);
-        List<List<Integer>> input = new ArrayList<>();
+        List<List<Double>> input = new ArrayList<>();
         try (BufferedReader br = new BufferedReader(new java.io.FileReader(file))) {
             String line;
             while ((line = br.readLine()) != null) {
-                List<Integer> equation = convertToInt(Arrays.asList(line.split(DELIMINATOR)));
+                List<Double> equation = convertToDouble(Arrays.asList(line.split(DELIMINATOR)));
                 input.add(equation);
             }
         } catch (IOException e) {
@@ -30,8 +27,8 @@ public class InputReader {
         return input;
     }
 
-    List<Integer> convertToInt(List<String> strings) {
-        return strings.stream().map(Integer::parseInt).collect(Collectors.toList());
+    List<Double> convertToDouble(List<String> strings) {
+        return strings.stream().map(Double::new).collect(Collectors.toList());
     }
 
 }

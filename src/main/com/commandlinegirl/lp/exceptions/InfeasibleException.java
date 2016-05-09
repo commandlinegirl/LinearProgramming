@@ -1,4 +1,4 @@
-package com.commandlinegirl.lp;
+package com.commandlinegirl.lp.exceptions;
 
 /**
  * Created on 05/05/16.

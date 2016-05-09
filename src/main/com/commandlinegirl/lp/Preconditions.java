@@ -2,9 +2,6 @@ package com.commandlinegirl.lp;
 
 import java.util.List;
 
-/**
- * Created on 05/05/16.
- */
 public class Preconditions {
 
     private Preconditions() {};
