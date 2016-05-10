@@ -17,7 +17,7 @@ public class SimpleMatrix {
     }
 
     public int getPivotRow(int pivotColumnIndex) {
-        double minValue = 0;
+        double minValue = Double.MAX_VALUE;
         int minIndex = 0;
         List<Double> valueColumn = getColumn(matrix.get(0).size() - 1);
         List<Double> pivotColumn = getColumn(pivotColumnIndex);
