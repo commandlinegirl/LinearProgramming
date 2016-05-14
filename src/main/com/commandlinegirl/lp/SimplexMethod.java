@@ -1,16 +1,39 @@
 package com.commandlinegirl.lp;
 
 
-import com.commandlinegirl.lp.maths.SimpleMatrix;
-import com.commandlinegirl.lp.models.LinearSolver;
-import com.commandlinegirl.lp.models.Solver;
+import com.commandlinegirl.lp.solvers.LinearSolver;
+import com.commandlinegirl.lp.solvers.Solver;
 
+import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Logger;
 
 public class SimplexMethod {
 
     private static final Logger logger = Logger.getLogger(SimplexMethod.class.getName());
+
+    public static double[] convertDoubles(List<Double> in) {
+        if (in == null)
+            return new double[] {};
+        double[] doubles = new double[in.size()];
+        Iterator<Double> iterator = in.iterator();
+        int i = 0;
+        while (iterator.hasNext()) {
+            doubles[i] = iterator.next();
+            i++;
+        }
+        return doubles;
+    }
+
+    public static double[][] convertDoublesMatrix(List<List<Double>> in) {
+        if (in == null || in.size() == 0 || in.get(0).size() == 0)
+            return new double[][] {};
+        double[][] doubles = new double[in.size()][in.get(0).size()];
+        for (int i = 0; i < in.size(); i++) {
+            doubles[i] = convertDoubles(in.get(i));
+        }
+        return doubles;
+    }
 
     public static void main(String... args) {
         if (args.length == 0) {
@@ -19,13 +42,15 @@ public class SimplexMethod {
         }
 
         InputReader freader = new InputReader();
-        List<List<Double>> tableau = freader.readInput(args[0]);
+        List<List<Double>> input = freader.readInput(args[0]);
 
-        Objective objective = new Objective(tableau.get(0));
-        SimpleMatrix equations = new SimpleMatrix(tableau.subList(1, tableau.size()));
+        double[][] converted = convertDoublesMatrix(input);
+        Tableaux tableaux = new Tableaux(converted);
 
-        Solver solver = new LinearSolver();
-        Objective result = solver.solve(objective, equations);
+        Solver solver = new LinearSolver(OptimizationType.MAX);
+        Objective result = solver.solve(tableaux);
+        System.out.println(result.getSolution());
 
     }
+
 }
