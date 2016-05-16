@@ -7,12 +7,11 @@ import java.util.logging.Logger;
 
 public class Tableau {
 
-    private static final double EPSILON = 1.0e-6;
-    private final double[][] matrix;
-
     private static final Logger logger = Logger.getLogger(Tableau.class.getName());
     private static final NumberFormat formatter = new DecimalFormat("#0.0");
-    private int[] basicVariables;
+    public static final double EPSILON = 1.0e-6; // acceptable error
+
+    private final double[][] matrix;
 
     public Tableau(double[][] matrix) {
         this.matrix = matrix;
@@ -143,17 +142,9 @@ public class Tableau {
      **/
     public boolean inProperForm() {
         int[] basicVars = getBasicVariables();
-        // Check if there is 1 basic variable per equation
-//        for (int p = 0; p < basicVars.length; p++) {
-//            if (basicVars[p] != 1) {
-//                logger.warning("Tableau has " + basicVars[p] + " basic variables in equation " + p);
-//                return false;
-//            }
-//        }
-
-        // Check if there is 1 basic variable per equation
-        // only nonbasic variables can have a non-zero value in
-        // the objective function row
+        for (int i : basicVars) {
+            if (i == -1) return false;
+        }
         return true;
     }
 
