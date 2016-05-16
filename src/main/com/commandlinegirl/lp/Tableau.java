@@ -3,13 +3,16 @@ package com.commandlinegirl.lp;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.Arrays;
+import java.util.logging.Logger;
 
 public class Tableau {
 
     private static final double EPSILON = 1.0e-6;
     private final double[][] matrix;
 
+    private static final Logger logger = Logger.getLogger(Tableau.class.getName());
     private static final NumberFormat formatter = new DecimalFormat("#0.0");
+    private int[] basicVariables;
 
     public Tableau(double[][] matrix) {
         this.matrix = matrix;
@@ -19,7 +22,7 @@ public class Tableau {
         return matrix;
     }
 
-    /** Return the index of the left-most negative variable in a list **/
+    /** Return the index of the left-most negative variable in the objective function **/
     public int getPivotColumn() {
         double[] objective = matrix[0];
         for (int i = 0; i < objective.length; i++) {
@@ -57,7 +60,7 @@ public class Tableau {
     }
 
     /** Returns the nth column of the matrix **/
-    private double[] getColumn(int columnIndex) {
+    public double[] getColumn(int columnIndex) {
         //TODO: Precondition
         double[] column = new double[matrix.length];
         for (int i = 0; i < matrix.length; i++) {
@@ -91,11 +94,23 @@ public class Tableau {
         }
     }
 
-    public void divideRowBy(int i, Double value) {
+    public void divideRowBy(int i, double value) {
         double[] row = matrix[i];
         for (int j = 0; j < row.length; j++) {
             row[j] = row[j] / value;
         }
+    }
+
+    public double[][] transpose() {
+        int x = matrix.length;
+        int y = matrix[0].length;
+        double[][] transposed = new double[y][x];
+        for (int i = 0; i < x; i++) {
+            for (int j = 0; j < y; j++) {
+                transposed[j][i] = matrix[i][j];
+            }
+        }
+        return transposed;
     }
 
     /** Returns a copy of constraint rows of the matrix **/
@@ -122,4 +137,52 @@ public class Tableau {
         }
     }
 
+    /**
+     * Returns true if the tableau is in Proper Form, ie. it has
+     * exactly one basic variable per equation.
+     **/
+    public boolean inProperForm() {
+        int[] basicVars = getBasicVariables();
+        // Check if there is 1 basic variable per equation
+//        for (int p = 0; p < basicVars.length; p++) {
+//            if (basicVars[p] != 1) {
+//                logger.warning("Tableau has " + basicVars[p] + " basic variables in equation " + p);
+//                return false;
+//            }
+//        }
+
+        // Check if there is 1 basic variable per equation
+        // only nonbasic variables can have a non-zero value in
+        // the objective function row
+        return true;
+    }
+
+    public int[] getBasicVariables() {
+        int x = matrix.length;
+        int y = matrix[0].length - 1;
+        int[] basicVars = new int[x];
+        Arrays.fill(basicVars, -1);
+        for (int i = 0; i < x; i++) {
+            for (int j = 0; j < y; j++) {
+                boolean basic = false;
+                if (Math.abs(matrix[i][j] - 1.0) < EPSILON) {
+                    basic = true;
+                    double[] column = getColumn(j);
+                    // check if all other coefficients in column are 0
+                    for (int m = 0; m < column.length; m++) {
+                        if (m != i && Math.abs(column[m] - 0.0) > EPSILON) {
+                            basic = false;
+                        }
+                    }
+                }
+                if (basic) {
+                    if (basicVars[i] != -1)
+                        throw new IllegalArgumentException("Tableau not in proper form. Repeated basic variable for equation " + i);
+                    basicVars[i] = j;
+                }
+            }
+        }
+        logger.info("Basic varibles" + Arrays.toString(basicVars));
+        return basicVars;
+    }
 }

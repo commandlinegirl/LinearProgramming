@@ -6,7 +6,11 @@ import com.commandlinegirl.lp.exceptions.InfeasibleException;
 import com.commandlinegirl.lp.exceptions.UnboundedException;
 import com.google.common.base.Preconditions;
 
+import java.util.logging.Logger;
+
 public class LinearSolver implements Solver {
+
+    private static final Logger logger = Logger.getLogger(LinearSolver.class.getName());
 
     private final OptimizationType type;
 
@@ -16,7 +20,7 @@ public class LinearSolver implements Solver {
 
     @Override
     public Objective solve(Tableau tableau) throws InfeasibleException, UnboundedException {
-        validate(tableau);
+        if (!validate(tableau)) throw new IllegalArgumentException("Tableau is not in proper form");
 
         // Check if the problem has a solution
         if (tableau.isInfeasible()) throw new InfeasibleException("Problem is infeasible.");
@@ -38,11 +42,12 @@ public class LinearSolver implements Solver {
     @Override
     public boolean validate(Tableau tableau) {
         Preconditions.checkNotNull(tableau, "Tableau cannot be null.");
-        return true;
+        return tableau.inProperForm();
     }
 
     /** Returns true if the current solution is optimal by verifying
-     * if there are only nonnegative values in the objective. **/
+     * if no entering basic variable is available, ie. there are no
+     * negative values in the objective function */
     private boolean isOptimal(double[] objective) {
         for (double d : objective) {
             if (d < 0)
