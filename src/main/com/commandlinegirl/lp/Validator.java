@@ -1,17 +1,14 @@
 package com.commandlinegirl.lp;
 
-/**
- * Created on 13/05/16.
- */
 public class Validator {
     private boolean feasible;
     private boolean bounded;
 
-    public boolean isFeasible(Tableaux tableaux) {
+    public boolean isFeasible(Tableau tableau) {
         return true;
     }
 
-    public boolean isBounded(Tableaux tableaux) {
+    public boolean isBounded(Tableau tableau) {
         return true;
     }
 }

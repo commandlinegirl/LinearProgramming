@@ -1,16 +1,18 @@
 package com.commandlinegirl.lp;
 
-
 public class Objective {
 
-    private final Tableaux tableaux;
-    private double[] solution;
+    private final Tableau tableau;
 
-    public Objective(Tableaux tableaux) {
-        this.tableaux = tableaux;
+    public Objective(Tableau tableau) {
+        this.tableau = tableau;
     }
 
-    public double[][] getSolution() {
-        return tableaux.getMatrix();
+    public double[] getSolution() {
+        return tableau.getMatrix()[0];
+    }
+
+    public Tableau getTableau() {
+        return tableau;
     }
 }

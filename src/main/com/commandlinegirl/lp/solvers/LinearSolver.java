@@ -1,10 +1,10 @@
 package com.commandlinegirl.lp.solvers;
 
 
-import com.commandlinegirl.lp.Objective;
-import com.commandlinegirl.lp.OptimizationType;
-import com.commandlinegirl.lp.Tableaux;
-import com.commandlinegirl.lp.Validator;
+import com.commandlinegirl.lp.*;
+import com.commandlinegirl.lp.exceptions.InfeasibleException;
+import com.commandlinegirl.lp.exceptions.UnboundedException;
+import com.google.common.base.Preconditions;
 
 public class LinearSolver implements Solver {
 
@@ -15,34 +15,42 @@ public class LinearSolver implements Solver {
     }
 
     @Override
-    public Objective solve(Tableaux tableaux) {
-        Validator validator = new Validator();
-        //if (validator.isFeasible(tableaux)) throw new InfeasibleException();
-        //if (validator.isBounded(tableaux)) throw new UnboundedException();
+    public Objective solve(Tableau tableau) throws InfeasibleException, UnboundedException {
+        validate(tableau);
+
+        // Check if the problem has a solution
+        if (tableau.isInfeasible()) throw new InfeasibleException("Problem is infeasible.");
+        if (tableau.isUnbounded()) throw new UnboundedException("Problem is unbounded.");
+
+        // Optimize
         int loop = 0;
-
-        double[] objectiveFunction = tableaux.getMatrix()[0];
-
-        while (foundNegativeCoeficients(objectiveFunction) && loop < 100) {
-            int pivotColumn =  tableaux.getPivotColumn();
-            if (tableaux.getRow(0)[pivotColumn] >= 0) {
-                return new Objective(tableaux); // optimal solution
-            }
-            int pivotRow = tableaux.getPivotRow(pivotColumn);
-            System.out.println(pivotColumn + " " + pivotRow);
-            tableaux.pivot(pivotRow, pivotColumn);
+        double[] objectiveFunction = tableau.getMatrix()[0];
+        while (!isOptimal(objectiveFunction) && loop < 100) {
+            int pivotColumn =  tableau.getPivotColumn(); // entering variable
+            int pivotRow = tableau.getPivotRow(pivotColumn); // leaving variable
+            tableau.pivot(pivotRow, pivotColumn);
             loop++;
         }
 
-        return new Objective(tableaux);
+        return new Objective(tableau);
     }
 
-    private boolean foundNegativeCoeficients(double[] objective) {
+    @Override
+    public boolean validate(Tableau tableau) {
+        Preconditions.checkNotNull(tableau, "Tableau cannot be null.");
+        return true;
+    }
+
+    /** Returns true if the current solution is optimal by verifying
+     * if there are only nonnegative values in the objective. **/
+    private boolean isOptimal(double[] objective) {
         for (double d : objective) {
             if (d < 0)
-                return true;
+                return false;
         }
-        return false;
+        return true;
     }
+
+
 
 }
